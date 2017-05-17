@@ -103,5 +103,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 SENDGRID_API_KEY = (
-    os.environ('SENDGRID_API_KEY')
+    os.environ.get('SENDGRID_API_KEY')
 )
