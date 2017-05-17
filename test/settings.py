@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_nose',
     'local_sendgrid'
 )
 
@@ -105,3 +106,5 @@ STATIC_URL = '/static/'
 SENDGRID_API_KEY = (
     os.environ.get('SENDGRID_API_KEY')
 )
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
