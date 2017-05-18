@@ -5,3 +5,4 @@ dist/
 db.sqlite3
 django_sendgrid.egg-info/
 nosetests.xml
+.pypirc
