@@ -8,20 +8,20 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
-    name='django_sendgrid',
+    name='django_sendgrid_local',
     version='0.1',
     packages=find_packages(),
     include_package_data=True,
     license='BSD License',  # example license
     description='A simple Django app to use sendgrid and store local copy.',
     long_description=README,
-    url='',
+    url='https://github.com/MasAval/django_sendgrid',
     author='Alvaro Saavedra',
     author_email='asaavedra@masaval.cl',
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: X.Y',  # replace "X.Y" as appropriate
+        'Framework :: Django :: 1.8',  # replace "X.Y" as appropriate
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',  # example license
         'Operating System :: OS Independent',
