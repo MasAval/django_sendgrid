@@ -58,7 +58,8 @@ class ContactList(models.Model):
         return u"{}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{}-{}".format(type(self).__name__, date.today())
+        if self.name is u'':
+            self.name = u"{}-{}".format(type(self).__name__, date.today())
         super(ContactList, self).save(*args, **kwargs)
 
     def contact_filter(self):
