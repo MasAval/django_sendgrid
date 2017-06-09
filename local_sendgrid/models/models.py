@@ -11,6 +11,8 @@ from urllib2 import HTTPError
 from datetime import date
 
 # sendgrid
+from sendgrid.helpers.mail import Mail, Email, OpenTracking, TrackingSettings, ClickTracking
+from sendgrid.helpers.mail import Personalization, MailSettings, SandBoxMode
 import sendgrid
 
 
@@ -290,27 +292,29 @@ class TransactionalEmail(models.Model):
     category = models.CharField(max_length=255)
 
     def email_data(self, sandbox=False):
-        return {
-            'personalizations': {
-                'to': [{'email': 'asaavedra@masaval.cl'}]
-            },
-            'from': {
-                'email': 'czapata@masaval.cl'
-            },
-            "content": {
-                "type": "text",
-                "value": "Hello, World!"
-            },
-            'mail_settings': {
-                'sandbox_mode': {'enable': 'true'}
-            }
+        mail = Mail()
 
-        }
+        mail.from_email = Email("no-reply@masaval.cl", "Masaval")
+
+        personalization = Personalization()
+        personalization.add_to(Email(self.recipient.email, "recipient.email"))
+        mail.add_personalization(personalization)
+
+        mail_settings = MailSettings()
+        mail_settings.sandbox_mode = SandBoxMode(sandbox)
+        mail.mail_settings = mail_settings
+
+        mail.template_id = "13b8f94f-bcae-4ec6-b752-70d6cb59f932"
+        tracking_settings = TrackingSettings()
+        tracking_settings.click_tracking = ClickTracking(True, True)
+        tracking_settings.open_tracking = OpenTracking(True)
+        mail.tracking_settings = tracking_settings
+
+        return mail.get()
 
     def sendgrid_send(self, sandbox=False):
         try:
-            print(self.email_data(sandbox))
-            sendgrid_api_client.mail.send.post(request_body=self.email_data(sandbox))
+            response = sendgrid_api_client.mail.send.post(request_body=self.email_data(sandbox))
             return True
         except HTTPError as e:
             logging.error(e)
