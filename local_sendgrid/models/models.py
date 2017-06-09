@@ -219,7 +219,7 @@ class Campaign(models.Model):
     contact_list = models.ForeignKey(ContactList, null=True)
 
     def __unicode__(self):
-        return u"{}".format(self.name)
+        return u"{}".format(self.title)
 
     def save(self, *args, **kwargs):
         if self.title is u'':
@@ -279,3 +279,39 @@ class Campaign(models.Model):
             html_content=response['html_content'],
             plain_content=response['plain_content']
         )
+
+
+class TransactionalEmail(models.Model):
+
+    html_content = models.TextField()
+    plain_content = models.TextField()
+    template_id = models.IntegerField()
+    recipient = models.ForeignKey(Contact)
+    category = models.CharField(max_length=255)
+
+    def email_data(self, sandbox=False):
+        return {
+            'personalizations': {
+                'to': [{'email': 'asaavedra@masaval.cl'}]
+            },
+            'from': {
+                'email': 'czapata@masaval.cl'
+            },
+            "content": {
+                "type": "text",
+                "value": "Hello, World!"
+            },
+            'mail_settings': {
+                'sandbox_mode': {'enable': 'true'}
+            }
+
+        }
+
+    def sendgrid_send(self, sandbox=False):
+        try:
+            print(self.email_data(sandbox))
+            sendgrid_api_client.mail.send.post(request_body=self.email_data(sandbox))
+            return True
+        except HTTPError as e:
+            logging.error(e)
+            return False

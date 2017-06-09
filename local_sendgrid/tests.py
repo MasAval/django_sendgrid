@@ -1,6 +1,6 @@
 import json
 from django.test import Client, TestCase
-from .models import Contact, ContactList, Campaign, Click, Open, Delivered
+from .models import Contact, ContactList, Campaign, Click, Open, Delivered, TransactionalEmail
 from datetime import date
 
 
@@ -236,6 +236,13 @@ class EventTest(TestCase):
         self.assertEqual(delivered.email, self.email)
         self.assertEqual(delivered.contact, self.contact)
         self.assertEqual(delivered.smtp_id, self.data['smtp-id'])
+
+
+class TransactionalEmailTest(TestCase):
+    def test_sendgrid_send(self):
+        contact = Contact.objects.create(email="asdf@asdf.asd")
+        email = TransactionalEmail.objects.create(recipient=contact, template_id=1)
+        self.assertTrue(email.sendgrid_send(sandbox=True))
 
 
 class ViewTest(TestCase):
