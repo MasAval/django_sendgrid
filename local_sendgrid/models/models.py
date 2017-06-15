@@ -287,7 +287,7 @@ class TransactionalEmail(models.Model):
 
     html_content = models.TextField()
     plain_content = models.TextField()
-    template_id = models.IntegerField()
+    template_id = models.CharField(max_length=255)
     recipient = models.ForeignKey(Contact)
     category = models.CharField(max_length=255)
 
@@ -304,17 +304,19 @@ class TransactionalEmail(models.Model):
         mail_settings.sandbox_mode = SandBoxMode(sandbox)
         mail.mail_settings = mail_settings
 
-        mail.template_id = "13b8f94f-bcae-4ec6-b752-70d6cb59f932"
+        mail.template_id = self.template_id
         tracking_settings = TrackingSettings()
         tracking_settings.click_tracking = ClickTracking(True, True)
         tracking_settings.open_tracking = OpenTracking(True)
         mail.tracking_settings = tracking_settings
 
-        return mail.get()
+        return mail
 
     def sendgrid_send(self, sandbox=False):
         try:
-            response = sendgrid_api_client.mail.send.post(request_body=self.email_data(sandbox))
+            response = sendgrid_api_client.mail.send.post(
+                request_body=self.email_data(sandbox).get()
+            )
             return True
         except HTTPError as e:
             logging.error(e)

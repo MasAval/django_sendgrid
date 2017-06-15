@@ -241,7 +241,9 @@ class EventTest(TestCase):
 class TransactionalEmailTest(TestCase):
     def test_sendgrid_send(self):
         contact = Contact.objects.create(email="asdf@asdf.asd")
-        email = TransactionalEmail.objects.create(recipient=contact, template_id=1)
+        email = TransactionalEmail.objects.create(
+            recipient=contact,
+            template_id="13b8f94f-bcae-4ec6-b752-70d6cb59f932")
         self.assertTrue(email.sendgrid_send(sandbox=True))
 
 
