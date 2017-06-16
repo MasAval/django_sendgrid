@@ -288,7 +288,7 @@ class TransactionalEmail(models.Model):
     html_content = models.TextField()
     plain_content = models.TextField()
     template_id = models.CharField(max_length=255)
-    recipient = models.ForeignKey(Contact)
+    recipients = models.ManyToManyField(Contact)
     category = models.CharField(max_length=255)
 
     def email_data(self, sandbox=False):
@@ -297,7 +297,8 @@ class TransactionalEmail(models.Model):
         mail.from_email = Email("no-reply@masaval.cl", "Masaval")
 
         personalization = Personalization()
-        personalization.add_to(Email(self.recipient.email, "recipient.email"))
+        for recipient in self.recipients.all():
+            personalization.add_to(Email(recipient.email, "recipient.email"))
         mail.add_personalization(personalization)
 
         mail_settings = MailSettings()
@@ -319,5 +320,5 @@ class TransactionalEmail(models.Model):
             )
             return True
         except HTTPError as e:
-            logging.error(e)
+            logging.error(e.read())
             return False
